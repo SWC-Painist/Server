@@ -106,10 +106,10 @@ def WirteScriptToFile(file_name : str, note_lists : list, meters : list, clefs :
 var div = document.getElementById("boo")
 var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
 
-renderer.resize(800, 600);
+renderer.resize(800, {});
 var context = renderer.getContext();
 context.setFont("Arial", 10, "").setBackgroundFillStyle("#eed");
-    ''')
+    '''.format(note_lists.__len__()*180))
 
     for i in range(note_lists.__len__()):
         if i == 0:
@@ -187,6 +187,7 @@ def SvgRender(file_name : str):
         num_str = meters[i][beg+1:end].split('/')
         meters[i] = (int(num_str[0]),int(num_str[1]))
 
+    print("Write to:" , file_name+'.html')
     WirteScriptToFile(file_name+'.html',note_lists,meters,clefs)
 
 

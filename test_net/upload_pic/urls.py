@@ -4,6 +4,9 @@ from upload_pic import views
 urlpatterns = [
    path('upload/picture/',views.upload_picture),
    path('upload/video/',views.upload_video),
+   path('check/video/',views.check_video),
+   path('check/video/only/',views.check_video_only),
+   path('upload/picture_info/',views.upload_picture_info),
    path('download/picture/',views.download_picture),
    path('history/',views.show_history),
    path('login/',views.my_login),
@@ -16,6 +19,7 @@ urlpatterns = [
    path('practice/month/',views.practice_month),
    path('practice/max/',views.practice_max),
    path('practice/progress/',views.practice_progress),
+   path('recommend/',views.recommend),
 ]
 
 

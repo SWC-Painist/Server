@@ -1,7 +1,7 @@
 from api import note
 from piano_transcription_inference import PianoTranscription, sample_rate, load_audio
 import mido
-
+import traceback
 transer = PianoTranscription(device='cuda')
 
 def GetMidiEvents(path : str) -> list:
@@ -25,9 +25,13 @@ def AudioAnalysis(path : str) -> list:
 
     path : audio file path
     '''
-    noteList = GetMidiEvents(path)
-    noteList.sort(key = lambda note : note['onset_time'])
-    ans = [note.pianoNote(i['midi_note'],int(i['onset_time']*1000),int(i['offset_time']*1000),i['velocity']) for i in noteList]
+    try :
+        noteList = GetMidiEvents(path)
+        noteList.sort(key = lambda note : note['onset_time'])
+        ans = [note.pianoNote(i['midi_note'],int(i['onset_time']*1000),int(i['offset_time']*1000),i['velocity']) for i in   noteList]
+    except Exception as e:
+        traceback.print_exc()
+        return []
     return ans
 
 if __name__ == '__main__':

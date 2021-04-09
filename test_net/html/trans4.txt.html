@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <script src="vexflow-min.js"></script>
+</head>
+<body>
+    <div id="boo"></div>
+    <script>
+        VF = Vex.Flow;
+
+var div = document.getElementById("boo")
+var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+
+renderer.resize(800, 360);
+var context = renderer.getContext();
+context.setFont("Arial", 10, "").setBackgroundFillStyle("#eed");
+    var stave0 = new VF.Stave(10, 40, 800);
+stave0.addClef("treble").addTimeSignature("4/4");
+stave0.setContext(context).draw();
+var notes0 = [
+new Vex.Flow.StaveNote({clef: "treble", keys: ["e/4","g/4","b/4","e/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["b/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/4","g/4","e/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["f/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["d/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["e/4","c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["d/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["b/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["e/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["b/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["d/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["g/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["d/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["b/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["b/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["d/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["c/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["b/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["d/5"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["a/4"], duration: "8" }),
+new Vex.Flow.StaveNote({clef: "treble", keys: ["g/5"], duration: "8" })
+];
+        var beams0 = VF.Beam.generateBeams(notes0);
+Vex.Flow.Formatter.FormatAndDraw(context, stave0, notes0);
+beams0.forEach(function(b) {b.setContext(context).draw()})
+
+        var stave1 = new VF.Stave(stave0.x, stave0.y+stave0.height, 800);
+stave1.addClef("bass").addTimeSignature("4/4");
+stave1.setContext(context).draw();
+var notes1 = [
+new Vex.Flow.StaveNote({clef: "bass", keys: ["e/3"], duration: "w" }),
+new Vex.Flow.StaveNote({clef: "bass", keys: ["b/2"], duration: "w" }),
+new Vex.Flow.StaveNote({clef: "bass", keys: ["c/3"], duration: "w" }),
+new Vex.Flow.StaveNote({clef: "bass", keys: ["g/2"], duration: "w" })
+];
+        var beams1 = VF.Beam.generateBeams(notes1);
+Vex.Flow.Formatter.FormatAndDraw(context, stave1, notes1);
+beams1.forEach(function(b) {b.setContext(context).draw()})
+
+        
+    </script>
+</body>
+    

@@ -28,13 +28,13 @@ class picthOnlyMatch:
             n = self.reference[i]
             n : pianoNote
             if n.chord != 'n':
-                self.window.append((n,False))
+                self.window.append([n,False])
                 if n.chord == 'e':
                     break
             else :
                 break
         if self.window.__len__() == 0:
-            self.window.append((self.reference[self.current],False))
+            self.window.append([self.reference[self.current],False])
         
         return self.current
 
@@ -68,6 +68,8 @@ class Matcher :
     
     def pretreatment(self, played : list) -> tuple:
         played = ShortEventFilter(played)
+        if played.__len__() == 0:
+            return(1,1,[])
         start_note = played[0]
         start_note : pianoNote
         start_time = start_note.start
@@ -77,6 +79,9 @@ class Matcher :
             played[index] = [played[index],-1]
         
         end_time = played[-1][0].start 
+
+        if end_time == 0:
+            return (1.0,1.0,played)
         tempo_rate =  self.reference[-1][0].start / end_time
 
         return (tempo_rate, 1.0,played)
@@ -253,12 +258,48 @@ class MactherMiddleware:
 
         ColorNote(path,renddict,path+".res.html","#dcdcdc")
 
+    def GetScore(self):
+        correct = 0
+        chord_num, chord_correct = 0,0
+        for code in self.resault:
+            if code in [1,3,5]:
+                correct += 1
+            if code in [2,3,4,5]:
+                chord_num += 1
+            if code in [3,5]:
+                chord_correct += 1
+        
+        right_score = 0
+        for note_index in self.right :
+            if note_index >= self.resault.__len__():
+                continue
+            if self.resault[note_index] in [1,3,5]:
+                right_score += 1
+
+        left_score = 0
+        for note_index in self.left :
+            if note_index >= self.resault.__len__():
+                continue
+            if self.resault[note_index] in [1,3,5]:
+                left_score += 1
+        if chord_num == 0:
+            chord_num,chord_correct = 1,1
+        return {"right" : right_score * 100 / self.right.__len__(), 
+                "left"  : left_score * 100 / self.left.__len__(),
+                "chord" : chord_correct * 100 / chord_num,
+                "total" : correct * 100 / self.resault.__len__()}
 
 class pitchOnlyMiddleWare:
-    def __init__(self,__ref : list, line_index : int):
+    def __init__(self,__ref : list, line_index : int, from_index = 0):
         self.matcher = picthOnlyMatch(__ref[line_index])
         self.last_rend_index = 0
         self.exe_line = line_index
+        for i in range(from_index):
+            self.matcher.NextWindow()
+
+    def InitExe(self,path : str) :
+        ColorNote(path,[(self.exe_line,0,"#00bfff")],path+".exe.html",False)
+        self.Rend(path+".exe.html")
 
     def match(self,played : list):
         self.matcher.SegmentMatch(played)
@@ -266,14 +307,27 @@ class pitchOnlyMiddleWare:
     def Rend(self,path : str):
         if self.matcher.windowCnt == self.last_rend_index:
             return
+        rendlist = [(self.exe_line, i, "#dcdcdc") for i in range(self.last_rend_index,self.matcher.windowCnt)]
+        if not self.matcher.End():
+            rendlist.append((self.exe_line,self.matcher.windowCnt,"#00bfff"))
+            
+        self.last_rend_index = self.matcher.windowCnt
+        ColorNote(path,rendlist,path,False)
+
+    def GetShouldPlayed(self):
+        return self.matcher.windowCnt
+    
+    def End(self):
+        return self.matcher.End()
 
 
 if __name__ == "__main__" :
     from svg_render import TextFileAna
-    from voice.noteGeter import AudioAnalysis
-    notes = AudioAnalysis(r"D:\VS_Progs\__CODE__PY\Painist\backend\data\Little_star_test.wav")
     f_content = TextFileAna(r'D:\VS_Progs\__CODE__PY\Painist\backend\data\trans_1.txt')
-    mw = MactherMiddleware(f_content['note_lists'])
-    mw.macth(notes)
-    mw.RendResault(r'D:\VS_Progs\__CODE__PY\Painist\backend\data\trans_1.txt.html')
+    mw = pitchOnlyMiddleWare(f_content['note_lists'],0)
+    mw.InitExe(r"D:\VS_Progs\__CODE__PY\Painist\backend\data\trans_1.txt.html")
+    mw.match([pianoNote(72,0,250,50),pianoNote(72,0,250,50)])
+    mw.Rend(r'D:\VS_Progs\__CODE__PY\Painist\backend\data\trans_1.txt.html.exe.html')
+    mw.match([pianoNote(72,0,250,50),pianoNote(79,0,250,50)])
+    mw.Rend(r'D:\VS_Progs\__CODE__PY\Painist\backend\data\trans_1.txt.html.exe.html')
     print("finish")
